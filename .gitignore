@@ -49,3 +49,11 @@ qtcreator-*
 
 # Catkin custom files
 CATKIN_IGNORE
+
+.vscode/
+__pycache__/
+
+# ignore copied code from submodules
+robot-autonomous-move/hokuyo_lib/
+
+ros2_workspace/
