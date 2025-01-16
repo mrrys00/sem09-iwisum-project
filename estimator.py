@@ -4,6 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.cluster import DBSCAN
 
+ESTIMATED_COLOR = 200
 
 def estimate_rectangles(grid):
     walls = np.column_stack(np.where(grid == 100))
@@ -30,19 +31,19 @@ def estimate_rectangles(grid):
 
         # Draw the left edge
         for y in range(min_y, max_y + 1):
-            grid[y, min_x] = 200
+            grid[y, min_x] = ESTIMATED_COLOR
 
         # Draw the right edge
         for y in range(min_y, max_y + 1):
-            grid[y, max_x] = 200
+            grid[y, max_x] = ESTIMATED_COLOR
 
         # Draw the top edge
         for x in range(min_x, max_x + 1):
-            grid[min_y, x] = 200
+            grid[min_y, x] = ESTIMATED_COLOR
 
         # Draw the bottom edge
         for x in range(min_x, max_x + 1):
-            grid[max_y, x] = 200
+            grid[max_y, x] = ESTIMATED_COLOR
 
     return grid
 
@@ -54,7 +55,7 @@ def visualize_map(grid, estimated_grid):
         -1: [0.5, 0.5, 0.5],  # Gray (unknown terrain)
         0: [1.0, 1.0, 1.0],  # White (blank space)
         100: [0.0, 0.0, 0.0],  # Black (walls)
-        200: [0.0, 1.0, 0.0]  # Green (estimated walls)
+        ESTIMATED_COLOR: [0.0, 1.0, 0.0]  # Green (estimated walls)
     }
 
     colored_map = np.zeros((height, width, 3))
