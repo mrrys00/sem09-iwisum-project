@@ -21,6 +21,8 @@ NODE_MAP_JSON = map_json_node/
 SRC = src/
 RESULTS = results/
 
+ROS_IMAGE_NAME = ros_ubuntu_v3
+ROS_DOCKER = ros_docker
 
 .SILENT: perpare_robot prepare_pc prepare_ros2_workspace test
 
@@ -105,7 +107,7 @@ before_ros_run_robot:
 	$(MAKE) add_serial_port_privilege
 
 prepare_pc:
-	# $(MAKE) install_ros2_humble
+	$(MAKE) install_ros2_humble
 	$(MAKE) install_ros2_nodes
 	$(MAKE) prepare_ros2_workspace
 
@@ -117,3 +119,17 @@ view_frames:
 save_map:
 	ros2 service call /slam_toolbox/save_map slam_toolbox/srv/SaveMap "name: {data: '$(RESULTS)map_$$(date +%s)'}"
 	echo $$?
+
+
+docker_build:
+	docker build -t $(ROS_IMAGE_NAME) .
+
+docker_run:
+	docker run -it -v $$(pwd):/workspace --name $(ROS_DOCKER) $(ROS_IMAGE_NAME)
+
+docker_stop:
+	docker stop $(ROS_DOCKER)
+	docker rm $(ROS_DOCKER)
+
+docker_remove:
+	docker image rm --force $(ROS_IMAGE_NAME)
