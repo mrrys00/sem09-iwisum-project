@@ -9,7 +9,7 @@ def estimate_rectangles(grid):
     walls = np.column_stack(np.where(grid == 100))
 
     # Clustering DBSCAN
-    clustering = DBSCAN(eps=3, min_samples=5).fit(walls)
+    clustering = DBSCAN(eps=5, min_samples=5).fit(walls)
     clusters = clustering.labels_
 
     for cluster_id in set(clusters):
