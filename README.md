@@ -35,3 +35,10 @@ start rviz simulation:
 source install/setup.bash
 ros2 launch nav2_bringup rviz_launch.py
 ```
+
+start map to json node:
+
+```
+source install/setup.bash
+ros2 run map_json_node map_json_node
+```
