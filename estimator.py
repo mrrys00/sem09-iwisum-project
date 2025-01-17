@@ -6,6 +6,7 @@ from sklearn.cluster import DBSCAN
 
 ESTIMATED_COLOR = 200
 
+
 def estimate_rectangles(grid):
     walls = np.column_stack(np.where(grid == 100))
 
