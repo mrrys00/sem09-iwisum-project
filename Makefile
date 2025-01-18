@@ -17,6 +17,8 @@ NODES = nodes/
 # NODE_EXPLORATION = exploration_algorithm/
 # NODE_PROJECT_BRINGUP = project_bringup/
 NODE_MAP_JSON = map_json_node/
+NODE_MAP_PEDICTOR = map_predictor/
+CONFIGS = configs/
 
 SRC = src/
 RESULTS = results/
@@ -74,7 +76,7 @@ prepare_urg2_node:
 
 copy_nodes:
 	# cp -r $(PROJECT_ROOT)$(NODES)$(NODE_PROJECT_BRINGUP) $(PROJECT_ROOT)$(NODES)$(NODE_MIABOT) $(PROJECT_ROOT)$(NODES)$(NODE_EXPLORATION) $(ROS2_WORKSPACE)$(SRC)
-	cp -r $(PROJECT_ROOT)$(NODES)$(NODE_MAP_JSON) $(ROS2_WORKSPACE)$(SRC)
+	cp -r $(PROJECT_ROOT)$(NODES)$(NODE_MAP_JSON) $(PROJECT_ROOT)$(NODES)$(NODE_MAP_PEDICTOR) $(PROJECT_ROOT)$(NODES)$(CONFIGS) $(ROS2_WORKSPACE)$(SRC)
 
 build_ros2_workspace:
 	cd $(ROS2_WORKSPACE); \
@@ -120,7 +122,7 @@ save_map:
 	ros2 service call /slam_toolbox/save_map slam_toolbox/srv/SaveMap "name: {data: '$(RESULTS)map_$$(date +%s)'}"
 	echo $$?
 
-
+# docker
 docker_build:
 	docker build -t $(ROS_IMAGE_NAME) .
 
@@ -133,3 +135,7 @@ docker_stop:
 
 docker_remove:
 	docker image rm --force $(ROS_IMAGE_NAME)
+
+# python
+prepare_python_packages:
+	pip3 install -r requirements.cfg
