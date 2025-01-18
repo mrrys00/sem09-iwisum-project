@@ -30,7 +30,7 @@ class MapToJsonNode(Node):
 
         self.get_logger().info(f"Subscribed to /map topic. Messages will be saved in {self.output_directory}.")
 
-    def map_callback(self, msg):
+    def map_callback(self, msg: OccupancyGrid):
         try:
             # Prepare the message data for JSON serialization
             map_data = {

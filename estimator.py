@@ -6,13 +6,16 @@ from sklearn.cluster import DBSCAN
 
 ESTIMATED_COLOR = 200
 
-
 def estimate_rectangles(grid):
     walls = np.column_stack(np.where(grid == 100))
 
     # Clustering DBSCAN
     clustering = DBSCAN(eps=5, min_samples=5).fit(walls)
     clusters = clustering.labels_
+
+    num_estimated_figures = 0
+    greatest_circumference = 0
+    total_circumference = 0
 
     for cluster_id in set(clusters):
         if cluster_id == -1:  # Omit noise
@@ -27,6 +30,16 @@ def estimate_rectangles(grid):
         # Calculate bounding rectangle
         min_y, min_x = np.min(cluster_points, axis=0)
         max_y, max_x = np.max(cluster_points, axis=0)
+
+        # Calculate circumference
+        width = max_x - min_x + 1
+        height = max_y - min_y + 1
+        circumference = 2 * (width + height)
+
+        # Update statistics
+        num_estimated_figures += 1
+        total_circumference += circumference
+        greatest_circumference = max(greatest_circumference, circumference)
 
         # Draw a rectangle on the map
 
@@ -46,8 +59,13 @@ def estimate_rectangles(grid):
         for x in range(min_x, max_x + 1):
             grid[max_y, x] = ESTIMATED_COLOR
 
-    return grid
+    # Log results
+    print(f"Number of estimated figures: {num_estimated_figures}")
+    print(f"Circumference of the greatest figure: {greatest_circumference}")
+    print(f"Total circumference of all estimated figures: {total_circumference}")
+    print(f"Accuracy: {total_circumference/(num_estimated_figures*greatest_circumference)*100}%")
 
+    return grid
 
 def visualize_map(grid, estimated_grid):
     height, width = grid.shape
@@ -84,10 +102,9 @@ def visualize_map(grid, estimated_grid):
 
     plt.show()
 
-
 folder_path = "example_maps"
 
-for filename in os.listdir(folder_path):
+for filename in sorted(os.listdir(folder_path)):
     if filename.endswith(".json"):
         file_path = os.path.join(folder_path, filename)
         print(f"Computing a file: {file_path}")

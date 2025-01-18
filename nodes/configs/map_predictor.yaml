@@ -1,0 +1,5 @@
+map_processor_node:
+  ros__parameters:
+    output_directory: "messages"  # output directory for jsons
+    save_json: true               # save metrics and grids in jsons
+    fixed_fig_size: -1            # setup greatest figure size; if -1 -> it will be calculated automatically while running

@@ -2,7 +2,7 @@
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
   <name>map_predictor</name>
-  <version>0.0.1</version>
+  <version>1.0.0</version>
   <description>Map processor node</description>
   <author email="rysszymon00@gmail.com">Szymon Ryś</author>
   <author email="tekielskirafal@gmail.com">Rafał Tekielski</author>
