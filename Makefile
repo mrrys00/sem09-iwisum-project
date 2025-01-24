@@ -139,3 +139,8 @@ docker_remove:
 # python
 prepare_python_packages:
 	pip3 install -r requirements.cfg
+
+# generate video
+generate_video:
+	cd results/
+	ffmpeg -framerate 1 -pattern_type glob -i '*.png' -c:v libx264 -pix_fmt yuv420p res.mp4

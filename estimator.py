@@ -5,6 +5,11 @@ import matplotlib.pyplot as plt
 from sklearn.cluster import DBSCAN
 
 ESTIMATED_COLOR = 200
+json_maps_path = "example_maps_v2"
+results_path = os.path.abspath(os.getcwd()) + "/results/"
+
+if not os.path.exists(results_path):
+    os.makedirs(results_path)
 
 def estimate_rectangles(grid):
     walls = np.column_stack(np.where(grid == 100))
@@ -67,9 +72,18 @@ def estimate_rectangles(grid):
 
     return grid
 
-def visualize_map(grid, estimated_grid):
-    height, width = grid.shape
+def visualize_map(json_data:dict, filename:str="", show:bool=False):
+    width = json_data['info']['width']
+    height = json_data['info']['height']
+    data = json_data['data']
+    num_estimated_figures = json_data['num_estimated_figures']
+    greatest_circumference = json_data['greatest_circumference']
+    total_circumference = json_data['total_circumference']
+    accuracy = json_data['accuracy']
 
+    grid = np.array(data).reshape((height, width))
+    estimated_grid = estimate_rectangles(grid.copy())
+            
     colormap = {
         -1: [0.5, 0.5, 0.5],  # Gray (unknown terrain)
         0: [1.0, 1.0, 1.0],  # White (blank space)
@@ -94,32 +108,37 @@ def visualize_map(grid, estimated_grid):
     plt.imshow(colored_map, origin='upper')
     plt.title("Original map")
     plt.axis('off')
-
+    
+    metrics = f'accuracy: {accuracy}%\nfig numb: {num_estimated_figures}'
+    plt.text(
+        -50, 0,
+        metrics,
+        fontsize = 12, 
+        bbox = dict(facecolor = 'red', alpha = 0.5))
+    
     plt.subplot(1, 2, 2)
     plt.imshow(colored_estimated_map, origin='upper')
     plt.title("Map with estimated obstacles")
     plt.axis('off')
 
-    plt.show()
+    if filename:
+        plt.savefig(results_path + filename)
+    if show:
+        plt.show()
+    
+    plt.close()
 
-folder_path = "example_maps"
 
-for filename in sorted(os.listdir(folder_path)):
+for filename in sorted(os.listdir(json_maps_path)):
     if filename.endswith(".json"):
-        file_path = os.path.join(folder_path, filename)
+        file_path = os.path.join(json_maps_path, filename)
         print(f"Computing a file: {file_path}")
 
         try:
             with open(file_path, 'r') as file:
                 json_data = json.load(file)
-
-            width = json_data['info']['width']
-            height = json_data['info']['height']
-            data = json_data['data']
-
-            grid = np.array(data).reshape((height, width))
-            estimated_grid = estimate_rectangles(grid.copy())
-            visualize_map(grid, estimated_grid)
+            
+            visualize_map(json_data, filename.split('.')[0], show=False)
 
         except FileNotFoundError:
             print(f"File: '{file_path}' not found.")
