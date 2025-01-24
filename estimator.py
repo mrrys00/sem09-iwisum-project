@@ -8,6 +8,11 @@ ESTIMATED_COLOR = 200
 json_maps_path = "example_maps_v2"
 results_path = os.path.abspath(os.getcwd()) + "/results/"
 
+figures_nums = []
+greatest_circumferencies = []
+total_circumferencies = []
+accuracies = []
+
 if not os.path.exists(results_path):
     os.makedirs(results_path)
 
@@ -81,6 +86,12 @@ def visualize_map(json_data:dict, filename:str="", show:bool=False):
     total_circumference = json_data['total_circumference']
     accuracy = json_data['accuracy']
 
+    # metricies
+    figures_nums.append(num_estimated_figures)
+    greatest_circumferencies.append(greatest_circumference)
+    total_circumferencies.append(total_circumference)
+    accuracies.append(accuracy)
+
     grid = np.array(data).reshape((height, width))
     estimated_grid = estimate_rectangles(grid.copy())
             
@@ -109,7 +120,7 @@ def visualize_map(json_data:dict, filename:str="", show:bool=False):
     plt.title("Original map")
     plt.axis('off')
     
-    metrics = f'accuracy: {accuracy}%\nfig numb: {num_estimated_figures}'
+    metrics = f'accuracy: {accuracy}\nfig numb: {num_estimated_figures}'
     plt.text(
         -50, 0,
         metrics,
@@ -128,20 +139,49 @@ def visualize_map(json_data:dict, filename:str="", show:bool=False):
     
     plt.close()
 
+def generate_plot(filename:str="result_plot", show:bool=False):
+    plt.figure(figsize=(12, 12))
+    plt.xlabel("epoch")
+    plt.axis('off')
 
-for filename in sorted(os.listdir(json_maps_path)):
-    if filename.endswith(".json"):
-        file_path = os.path.join(json_maps_path, filename)
-        print(f"Computing a file: {file_path}")
+    plt.subplot(3,1,1)
+    plt.ylabel("accuracy")
+    plt.plot([i for i in range(len(accuracies))], accuracies, 'tab:green', label="accuracy")
 
-        try:
-            with open(file_path, 'r') as file:
-                json_data = json.load(file)
-            
-            visualize_map(json_data, filename.split('.')[0], show=False)
+    plt.subplot(3,1,2)
+    plt.ylabel("number of obstacles")
+    plt.plot([i for i in range(len(figures_nums))], figures_nums, 'tab:orange', label="number of obstacles")
 
-        except FileNotFoundError:
-            print(f"File: '{file_path}' not found.")
+    plt.subplot(3,1,3)
+    plt.ylabel("max obstacle circ.")
+    plt.plot([i for i in range(len(greatest_circumferencies))], greatest_circumferencies, 'tab:blue', label="max obstacle circ.")
 
-        except json.JSONDecodeError:
-            print(f"File: '{file_path}' not correct JSON file.")
+    plt.savefig(results_path + filename)
+
+    if show:
+        plt.show()
+    
+    plt.close()
+
+def main():
+    for filename in sorted(os.listdir(json_maps_path)):
+        if filename.endswith(".json"):
+            file_path = os.path.join(json_maps_path, filename)
+            print(f"Computing a file: {file_path}")
+
+            try:
+                with open(file_path, 'r') as file:
+                    json_data = json.load(file)
+
+                visualize_map(json_data, filename.split('.')[0], show=False)
+
+            except FileNotFoundError:
+                print(f"File: '{file_path}' not found.")
+
+            except json.JSONDecodeError:
+                print(f"File: '{file_path}' not correct JSON file.")
+                
+    generate_plot()
+
+if __name__ == '__main__':
+    main()
