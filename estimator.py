@@ -73,7 +73,14 @@ def estimate_rectangles(grid):
     print(f"Number of estimated figures: {num_estimated_figures}")
     print(f"Circumference of the greatest figure: {greatest_circumference}")
     print(f"Total circumference of all estimated figures: {total_circumference}")
-    print(f"Accuracy: {total_circumference/(num_estimated_figures*greatest_circumference)*100}%")
+    accuracy = total_circumference/(num_estimated_figures*greatest_circumference)
+    print(f"Accuracy: {accuracy*100}%")
+    
+    # Save metricies
+    figures_nums.append(num_estimated_figures)
+    greatest_circumferencies.append(greatest_circumference)
+    total_circumferencies.append(total_circumference)
+    accuracies.append(round(accuracy, 5))
 
     return grid
 
@@ -81,16 +88,6 @@ def visualize_map(json_data:dict, filename:str="", show:bool=False):
     width = json_data['info']['width']
     height = json_data['info']['height']
     data = json_data['data']
-    num_estimated_figures = json_data['num_estimated_figures']
-    greatest_circumference = json_data['greatest_circumference']
-    total_circumference = json_data['total_circumference']
-    accuracy = json_data['accuracy']
-
-    # metricies
-    figures_nums.append(num_estimated_figures)
-    greatest_circumferencies.append(greatest_circumference)
-    total_circumferencies.append(total_circumference)
-    accuracies.append(accuracy)
 
     grid = np.array(data).reshape((height, width))
     estimated_grid = estimate_rectangles(grid.copy())
@@ -120,7 +117,9 @@ def visualize_map(json_data:dict, filename:str="", show:bool=False):
     plt.title("Original map")
     plt.axis('off')
     
-    metrics = f'accuracy: {accuracy}\nfig numb: {num_estimated_figures}'
+    num_estimated_figures = figures_nums[-1]
+    accuracy = accuracies[-1]
+    metrics = f'accuracy: {accuracy*100}%\nfig numb: {num_estimated_figures}'
     plt.text(
         -50, 0,
         metrics,
