@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 from sklearn.cluster import DBSCAN
 
 ESTIMATED_COLOR = 200
-json_maps_path = "example_maps_v2"
+json_maps_path = "example_maps_v3"
 results_path = os.path.abspath(os.getcwd()) + "/results/"
 
 figures_nums = []
